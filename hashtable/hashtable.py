@@ -11,7 +11,6 @@ class HashTableEntry:
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
 
-
 class HashTable:
     """
     A hash table that with `capacity` buckets
@@ -21,8 +20,9 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
 
+        self.capacity = [MIN_CAPACITY if capacity < MIN_CAPACITY else capacity][0]
+        self.ht = [None] * self.capacity
 
     def get_num_slots(self):
         """
@@ -34,7 +34,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return len(self.ht)
 
 
     def get_load_factor(self):
@@ -44,6 +44,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        pass
 
 
     def fnv1(self, key):
@@ -53,7 +54,7 @@ class HashTable:
         Implement this, and/or DJB2.
         """
 
-        # Your code here
+        pass
 
 
     def djb2(self, key):
@@ -62,8 +63,13 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        val = 5381
+        key = key.encode()
 
+        for x in key:
+            val = (val*33) + x
+        
+        return x
 
     def hash_index(self, key):
         """
@@ -81,7 +87,15 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+
+        # Hash the key
+        hash = self.djb2(key)
+
+        # Create index
+        idx = hash % self.capacity
+
+        # Store it
+        self.ht[idx] = HashTableEntry(key, value)
 
 
     def delete(self, key):
@@ -92,7 +106,18 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+
+        # Find hash
+        hash = self.djb2(key)
+
+        # Get index
+        idx = hash % self.capacity
+
+        if self.ht[idx].value == None:
+            return "Key not found"
+
+        else:
+            self.ht[idx] = None
 
 
     def get(self, key):
@@ -103,7 +128,19 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        # Find the hash for the key
+        hash = self.djb2(key)
+
+        # Get index
+        idx = hash % self.capacity
+
+        if self.ht[idx] == None:
+            return None
+        
+        else:
+            return self.ht[idx].value
+
+
 
 
     def resize(self, new_capacity):
@@ -113,7 +150,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        
 
 
 
