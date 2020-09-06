@@ -54,7 +54,20 @@ class HashTable:
         Implement this, and/or DJB2.
         """
 
-        pass
+        FNV_offset_basis = 14695981039346656037
+        FNV_prime = 1099511628211
+        
+         # hash := FNV_offset_basis do
+        hashed_result = FNV_offset_basis
+        key_bytes = key.encode()
+        # for each byte_of_data to be hashed
+        for byte in key_bytes:
+        #     hash := hash × FNV_prime
+            hashed_result = hashed_result * FNV_prime
+        #     hash := hash XOR byte_of_data
+            hashed_result = hashed_result ^ byte
+        # return hash
+        return hashed_result
 
 
     def djb2(self, key):
@@ -63,12 +76,13 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        val = 5381
-        key = key.encode()
+        x = 5381
 
-        for x in key:
-            val = (val*33) + x
-        
+        key_bytes = key.encode()
+
+        for y in key_bytes:
+            x = ((x << 5) + x) + y
+
         return x
 
     def hash_index(self, key):
