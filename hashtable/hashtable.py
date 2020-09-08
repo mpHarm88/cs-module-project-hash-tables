@@ -23,6 +23,8 @@ class HashTable:
 
         self.capacity = [MIN_CAPACITY if capacity < MIN_CAPACITY else capacity][0]
         self.ht = [None] * self.capacity
+        self.new_ht = None
+        self.item_count = 0
 
     def get_num_slots(self):
         """
@@ -34,7 +36,7 @@ class HashTable:
 
         Implement this.
         """
-        return len(self.ht)
+        return self.capacity
 
 
     def get_load_factor(self):
@@ -43,8 +45,18 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-        pass
+        load = self.item_count / self.capacity
+
+        if load > .7:
+            print("Load Factor >0.7, resizing larger")
+            self.resize(self.capacity*2)
+            self.get_load_factor()
+        elif load < .2:
+            print("Load Factor <0.2, resizing smaller")
+            self.resize(self.capacity//2)
+            self.get_load_factor()
+        
+        return
 
 
     def fnv1(self, key):
@@ -109,8 +121,28 @@ class HashTable:
         idx = hash % self.capacity
 
         # Store it
-        self.ht[idx] = HashTableEntry(key, value)
+        val = HashTableEntry(key, value)
 
+        # If index is none then insert value
+        if self.ht[idx] ==  None:
+            self.ht[idx] = val
+            self.item_count += 1
+
+        # If key at index is equal to key then change value
+        elif self.ht[idx].key == key:
+            self.ht[idx].value = value
+
+
+        # if key is not present then insert at end of list
+        elif self.ht[idx].next == None:
+            self.ht[idx].next = val
+            self.item_count += 1
+        
+        # else change the next val to the value
+        else: 
+            self.ht[idx].next.value = value
+        
+        self.get_load_factor()
 
     def delete(self, key):
         """
@@ -127,12 +159,21 @@ class HashTable:
         # Get index
         idx = hash % self.capacity
 
-        if self.ht[idx].value == None:
+        if self.ht[idx] == None:
             return "Key not found"
 
-        else:
+        elif self.ht[idx].key == key:
             self.ht[idx] = None
-
+            self.item_count -= 1
+        
+        elif self.ht[idx].next == None:
+            return
+        
+        elif self.ht[idx].next.key == key:
+            self.ht[idx].next = None
+            self.item_count -= 1
+        
+        self.get_load_factor()
 
     def get(self, key):
         """
@@ -150,12 +191,19 @@ class HashTable:
 
         if self.ht[idx] == None:
             return None
+
+        # look for key in linked list
+        while self.ht[idx].key != key:
+            
+            # if key is not found return none
+            if self.ht[idx].next == None:
+                return None
+            else:
+                self.ht[idx] = self.ht[idx].next
         
-        else:
+        # if key equals inputted key then return value
+        if self.ht[idx].key == key:
             return self.ht[idx].value
-
-
-
 
     def resize(self, new_capacity):
         """
@@ -164,8 +212,27 @@ class HashTable:
 
         Implement this.
         """
-        
 
+        # save old hash table
+        old_ht = self.ht
+
+        # overwrite old hash table
+        self.ht = [None] * new_capacity
+
+        # overwrite old cpacity
+        self.capacity = new_capacity
+
+        # resize
+        for x in old_ht:
+            if x == None:
+                continue
+            else:
+                self.put(x.key, x.value)
+
+                if x.next == None:
+                    continue
+                else:
+                    self.put(x.next.key, x.next.value)
 
 
 if __name__ == "__main__":
@@ -202,3 +269,5 @@ if __name__ == "__main__":
         print(ht.get(f"line_{i}"))
 
     print("")
+
+    print(ht.get_load_factor())
