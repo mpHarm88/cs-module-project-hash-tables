@@ -1,7 +1,16 @@
 def word_count(s):
-    # Your code here
+    
+    dont_include = ['"', ':', ';', ',', '.', '-', '+', '=', '/', '|', '[', ']', '{', '}', '(', ')', '*', '^', '&']
 
+    d = {}
 
+    for x in s.lower().split():
+        if x not in dont_include and d.get(x) == None:
+            d[x] = 1
+        else:
+            d[x] += 1
+    
+    return d
 
 if __name__ == "__main__":
     print(word_count(""))

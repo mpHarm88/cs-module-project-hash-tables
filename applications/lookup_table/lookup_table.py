@@ -1,5 +1,6 @@
 # Your code here
-
+import random
+import math
 
 def slowfun_too_slow(x, y):
     v = math.pow(x, y)
@@ -9,6 +10,9 @@ def slowfun_too_slow(x, y):
 
     return v
 
+# Create dictionary to hold repeated calculations   
+factorial_hash = {}
+
 def slowfun(x, y):
     """
     Rewrite slowfun_too_slow() in here so that the program produces the same
@@ -16,7 +20,19 @@ def slowfun(x, y):
     """
     # Your code here
 
-
+    # If value has been calculated already then return the saved value
+    if factorial_hash.get(f"{x}{y}") != None:
+        print("Used hash dict")
+        return factorial_hash.get(f"{x}{y}")
+    
+    # If value has not been calculated then calculate x, y
+    else:
+        v = math.pow(x, y)
+        v = math.factorial(v)
+        v //= (x+y)
+        v %= 982451653
+        factorial_hash[f"{x}{y}"] = v
+        return v
 
 # Do not modify below this line!
 
