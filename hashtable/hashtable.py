@@ -23,7 +23,6 @@ class HashTable:
 
         self.capacity = [MIN_CAPACITY if capacity < MIN_CAPACITY else capacity][0]
         self.ht = [None] * self.capacity
-        self.new_ht = None
         self.item_count = 0
 
     def get_num_slots(self):
@@ -53,10 +52,11 @@ class HashTable:
             self.get_load_factor()
         elif load < .2:
             print("Load Factor <0.2, resizing smaller")
-            self.resize(self.capacity//2)
+            smaller_size = self.capacity//2
+            self.resize([smaller_size if smaller_size >= 8 else 8 ][0])
             self.get_load_factor()
         
-        return
+        return load
 
 
     def fnv1(self, key):
@@ -269,5 +269,3 @@ if __name__ == "__main__":
         print(ht.get(f"line_{i}"))
 
     print("")
-
-    print(ht.get_load_factor())
